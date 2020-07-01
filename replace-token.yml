@@ -21,13 +21,13 @@ steps:
   inputs:
     targetType: Inline
     script: |
-      $filePath = ${{ parameters.FileWithPath }}
-      $filePathBackup = $filePath + "." + ${{ parameters.BackupFileExtension }}
-      $definedBackup = (${{ parameters.BackupFileExtension }}.Length -gt 0)
-      $restoreBackup = ${{ parameters.RestoreBackup }}.ToLower()
+      $filePath = '${{ parameters.FileWithPath }}'
+      $filePathBackup = $filePath + "." + '${{ parameters.BackupFileExtension }}'
+      $definedBackup = (('${{ parameters.BackupFileExtension }}').Length -gt 0)
+      $restoreBackup = ('${{ parameters.RestoreBackup }}').ToLower()
       $isRestoreBackup = ($restoreBackup -eq '1' -or $restoreBackup -eq 'yes' -or $restoreBackup -eq 'true')
-      $tokenStr = ${{ parameters.TokenString }}
-      $tokenVal = ${{ parameters.TokenValue }}  
+      $tokenStr = '${{ parameters.TokenString }}'
+      $tokenVal = '${{ parameters.TokenValue }}'  
       If ($definedBackup) {
         If ($isRestoreBackup -and (Test-Path $filePathBackup -PathType Leaf)) {
             Write-Host "  Restore Original"
