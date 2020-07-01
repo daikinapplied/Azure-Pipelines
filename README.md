@@ -24,5 +24,9 @@ steps:
     TokenValue: '$(my-app-connectionstring)' # Could come from Azure Vault or Variable in Pipeline Build or Release
 ```
 
+Some additional notes:
+1. The **name** referencing *daikinapplied/Azure-Pipelines* within the resources is the GitHub company and repo
+2. The **repository** *templates* is cross-referenced within the template mentioned with the yml file
+
 ## Resources
 [Microsoft Documentation on Pipelines Step Templates](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops)
