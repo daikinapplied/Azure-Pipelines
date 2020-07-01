@@ -1,0 +1,48 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# replace-token
+# Daikin Applied Americas Step Template
+# Developed by Hans Dickel
+# Repo daikinapplied/Azure-Pipelines
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops
+
+parameters:
+  Message: ''
+  FileWithPath: ''
+  BackupFileExtension: 'original'
+  RestoreBackup: 'no'
+  TokenString: ''
+  TokenValue: ''
+
+steps:
+- task: PowerShell@2
+  displayName: 'Replace Token'
+  inputs:
+    targetType: Inline
+    script: |
+      $message = ${{ parameters.Message }}
+      $filePath = ${{ parameters.FileWithPath }}
+      $filePathBackup = $filePath + "." + ${{ parameters.BackupFileExtension }}
+      $definedBackup = (${{ parameters.BackupFileExtension }}.Length -gt 0)
+      $restoreBackup = ${{ parameters.RestoreBackup }}.ToLower()
+      $isRestoreBackup = ($restoreBackup -eq '1' -or $restoreBackup -eq 'yes' -or $restoreBackup -eq 'true')
+      $tokenStr = ${{ parameters.TokenString }}
+      $tokenVal = ${{ parameters.TokenValue }}
+    
+      Write-Host "$message"
+      If ($definedBackup) {
+        If ($isRestoreBackup -and (Test-Path $filePathBackup -PathType Leaf)) {
+            Write-Host "  Restore Original"
+            Copy-Item -Path "$filePathBackup" -Destination "$filePath"
+        }
+        Else {
+            Write-Host "  Backup Original"
+            Copy-Item -Path "$filePath" -Destination "$filePathBackup"
+        }
+      }
+    
+      Write-Host "  Update Data for $tokenStr"
+      $oldContent = Get-Content -Path "$filePath" -Raw
+      $newContent = $oldContent.Replace("$tokenStr","$tokenVal")
+      Set-Content -Path "$filePath" -Value $newContent -Force
