@@ -5,7 +5,7 @@ What initially started as having a collection of Azure DevOps Pipelines Task Gro
 ## Using
 The simplist way to reference these templates is to use the following in your YAML files (e.g., azure-pipelines.yml):
 
-'''
+```
 resources:
   repositories:
     - repository: templates
@@ -22,7 +22,7 @@ steps:
     RestoreBackup: 'no'
     TokenString: '$DBCONNSTR'
     TokenValue: '$(my-app-connectionstring)' # Could come from Azure Vault or Variable in Pipeline Build or Release
-'''
+```
 
 ## Resources
-[https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops](Microsoft Documentation on Pipelines Step Templates)
+[Microsoft Documentation on Pipelines Step Templates](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops)
