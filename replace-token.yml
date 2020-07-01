@@ -14,6 +14,7 @@ parameters:
   RestoreBackup: 'no'
   TokenString: ''
   TokenValue: ''
+  Debug: 'no'
 
 steps:
 - task: PowerShell@2
@@ -28,6 +29,27 @@ steps:
       $isRestoreBackup = ($restoreBackup -eq '1' -or $restoreBackup -eq 'yes' -or $restoreBackup -eq 'true')
       $tokenStr = "${{ parameters.TokenString }}"
       $tokenVal = "${{ parameters.TokenValue }}"
+      $debug = ("${{ parameters.Debug }}").ToLower()
+      $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
+      
+      If ($isDebug) {
+        Write-Host "PARAMETERS:"
+        Write-Host "FileWithPath: $filePath"
+        Write-Host "BackupFileExtension: $filePathBackup"
+        Write-Host "RestoreBackup: $isRestoreBackup"
+        Write-Host "TokenString: $tokenStr"
+        Write-Host "TokenValue: $tokenVal"
+        
+        Write-Host "FOLDER INFORMATION:"
+        $loc = Get-Location
+        $scriptFolder = $PSScriptRoot
+        Write-Host "Startup Folder: $loc"
+        Write-Host "Script Folder: $scriptFolder"
+        
+        Write-Host "CURRENT FOLDER CONTENTS:"
+        Dir | Format-Table
+      }
+      
       If ($definedBackup) {
         If ($isRestoreBackup -and (Test-Path $filePathBackup -PathType Leaf)) {
             Write-Host "Restore Original"
