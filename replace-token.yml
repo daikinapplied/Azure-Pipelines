@@ -10,7 +10,7 @@
 parameters:
   DisplayName: 'Replace Token'
   FileWithPath: ''
-  BackupFileExtension: 'pipelines-backup'
+  BackupFileExtension: 'original'
   RestoreBackup: 'no'
   TokenString: ''
   TokenValue: ''
