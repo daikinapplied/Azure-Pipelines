@@ -33,7 +33,7 @@ steps:
       $debug = ("${{ parameters.Debug }}").ToLower()
       $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
       $continueSilently = ('${{ parameters.ContinueSilently }}').ToLower()
-      $isContinueSilently = ($continueSilently -eq '1' -or $continueSilently -eq 'yes' or $continueSilently -eq 'true')
+      $isContinueSilently = ($continueSilently -eq '1' -or $continueSilently -eq 'yes' -or $continueSilently -eq 'true')
       
       If ($isDebug) {
         Write-Host "PARAMETERS:"
