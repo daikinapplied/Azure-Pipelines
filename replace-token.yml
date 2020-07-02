@@ -52,13 +52,14 @@ steps:
         Dir | Format-Table
         Write-Host
       }
-      
+
       If ($definedBackup) {
-        If ($isRestoreBackup -and (Test-Path $filePathBackup -PathType Leaf)) {
+        $backupExists = (Test-Path $filePathBackup -PathType Leaf)
+        If ($isRestoreBackup -and $backupExists) {
             Write-Host "Restore Original"
             Copy-Item -Path "$filePathBackup" -Destination "$filePath"
         }
-        Else {
+        ElseIf (!$backupExists) {
             Write-Host "Backup Original"
             Copy-Item -Path "$filePath" -Destination "$filePathBackup"
         }
