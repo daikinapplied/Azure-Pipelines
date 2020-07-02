@@ -64,8 +64,8 @@ steps:
             Copy-Item -Path "$filePath" -Destination "$filePathBackup"
         }
       }
-    
-      Write-Host "Update Data for $tokenStr"
+      
+      Write-Host "Update Data for $tokenStr within $filePath"
       $oldContent = Get-Content -Path "$filePath" -Raw
       $newContent = $oldContent.Replace("$tokenStr","$tokenVal")
       Set-Content -Path "$filePath" -Value $newContent -Force
