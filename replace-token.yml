@@ -14,6 +14,7 @@ parameters:
   RestoreBackup: 'no'
   TokenString: ''
   TokenValue: ''
+  ContinueSilently: 'yes'
   Debug: 'no'
 
 steps:
@@ -31,6 +32,8 @@ steps:
       $tokenVal = "${{ parameters.TokenValue }}"
       $debug = ("${{ parameters.Debug }}").ToLower()
       $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
+      $continueSilently = ('${{ parameters.ContinueSilently }}').ToLower()
+      $isContinueSilently = ($continueSilently -eq '1' -or $continueSilently -eq 'yes' or $continueSilently -eq 'true')
       
       If ($isDebug) {
         Write-Host "PARAMETERS:"
@@ -66,9 +69,16 @@ steps:
       }
       
       Write-Host "Update Data for $tokenStr within $filePath"
-      $oldContent = Get-Content -Path "$filePath" -Raw
-      $newContent = $oldContent.Replace("$tokenStr","$tokenVal")
-      Set-Content -Path "$filePath" -Value $newContent -Force
-
+      Try {
+        $oldContent = Get-Content -Path "$filePath" -Raw
+        $newContent = $oldContent.Replace("$tokenStr","$tokenVal")
+        Set-Content -Path "$filePath" -Value $newContent -Force
+      }
+      Catch {
+        Write-Host "Error encountered trying to update token: $_"
+        If (!isContinueSilently) {
+          Exit 1
+        }
+      }
       Write-Host "Update Complete"
-      
+      Exit 0
