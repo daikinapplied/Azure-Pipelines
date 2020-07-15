@@ -76,6 +76,13 @@ steps:
           Write-Host "Updating File"
           Set-Content -Path "$filePath" -Value $newContent -Force
         }
+        If ($isDebug) {
+          Write-Host
+          Write-Host "~~~~~~~~~~~~~~~~~ File Contents (Start) ~~~~~~~~~~~~~~~~~"
+          Get-Content -Path "$filePath" -Raw
+          Write-Host "~~~~~~~~~~~~~~~~~ File Contents (End) ~~~~~~~~~~~~~~~~~"
+          Write-Host
+        }
       }
       Catch {
         Write-Host "Error encountered trying to update token: $_"
