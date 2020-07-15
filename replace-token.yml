@@ -52,7 +52,7 @@ steps:
         Write-Host
         
         Write-Host "CURRENT FOLDER CONTENTS:"
-        Dir | Format-Table
+        Dir -Recurse | Format-Table
         Write-Host
       }
 
