@@ -9,7 +9,7 @@
 
 parameters:
   DisplayName: 'Publish Dotnet'
-  SiteSource: '.\'
+  SourcePath: '.\'
   TargetPath: ''
   Debug: 'no'
 
@@ -20,16 +20,15 @@ steps:
     targetType: Inline
     script: |
       $scriptFolder = $PSScriptRoot
-      $siteSource = "${{ parameters.SiteSource }}"
+      $sourcePath = "${{ parameters.SourcePath }}"
       $targetPath = "${{ parameters.TargetPath }}"
+      $debug = "${{ parameters.Debug }}"
       $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
-      $sourcePath = "$scriptFolder\$siteSource"
       
       If ($isDebug) {
         Write-Host "PARAMETERS:"
-        Write-Host "SiteSource: $siteSource"
-        Write-Host "TargetPath: $targetPath"
         Write-Host "SourcePath: $sourcePath"
+        Write-Host "TargetPath: $targetPath"
         Write-Host
         
         Write-Host "FOLDER INFORMATION:"
