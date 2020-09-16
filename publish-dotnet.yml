@@ -1,0 +1,73 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# publish-dotnet
+# Daikin Applied Americas Step Template
+# Developed by Hans Dickel
+# Repo daikinapplied/Azure-Pipelines
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops
+
+parameters:
+  DisplayName: 'Publish Dotnet'
+  SiteSource: '.\'
+  TargetPath: ''
+  Debug: 'no'
+
+steps:
+- task: PowerShell@2
+  displayName: '${{ parameters.DisplayName }}'
+  inputs:
+    targetType: Inline
+    script: |
+      $scriptFolder = $PSScriptRoot
+      $siteSource = "${{ parameters.SiteSource }}"
+      $targetPath = "${{ parameters.TargetPath }}"
+      $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
+      $sourcePath = "$scriptFolder\$siteSource"
+      
+      If ($isDebug) {
+        Write-Host "PARAMETERS:"
+        Write-Host "SiteSource: $siteSource"
+        Write-Host "TargetPath: $targetPath"
+        Write-Host "SourcePath: $sourcePath"
+        Write-Host
+        
+        Write-Host "FOLDER INFORMATION:"
+        $loc = Get-Location
+        Write-Host "Startup Folder: $loc"
+        Write-Host "Script Folder: $scriptFolder"
+        Write-Host
+        
+        Write-Host "CURRENT FOLDER CONTENTS:"
+        Dir -Recurse | Format-Table
+      }
+
+      Write-Host
+      Write-Host "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      Write-Host "[Website Deployment]"
+
+      If (Test-Path $targetPath) {
+        # Create an app_offline.htm file on the target publish location - This takes the service offline (preventing file in use errors)
+	      Write-Host
+	      Write-Host "Taking existing site offline"
+	      New-Item "$targetPath\app_offline.htm" -Force -ItemType "file" -value "<html>Service offline for software update...</html>"
+	      Start-Sleep -s 3
+      }
+
+      Write-Host
+      Write-Host "Copying files..."
+      robocopy "$sourcePath" "$targetPath" /PURGE /S /XF app_offline.htm /XD logs /NP
+
+      Write-Host
+      Write-Host "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      Write-Host "[Cleanup]"
+
+      If (Test-Path "$targetPath\app_offline.htm") {
+        Write-Host
+        Write-Host "Bring site online..."
+        Write-Host
+	      Remove-Item "$targetPath\app_offline.htm"
+      }
+
+      Write-Host "Update Process Complete"
+      Exit 0
