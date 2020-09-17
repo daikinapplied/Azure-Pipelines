@@ -38,7 +38,7 @@ steps:
         Write-Host "PARAMETERS:"
         Write-Host "SourcePath: $sourcePath"
         Write-Host "TargetPath: $targetPath"
-        Write-Host "CertificateIdentifier: $certIdentifer"
+        Write-Host "CertificateIdentifier: $certIdentifier"
         Write-Host "CertificateIdType: $certIdType"
         Write-Host "CertificateStore: $certStore"
         Write-Host "TimeServer: $timeServer"
