@@ -35,6 +35,7 @@ steps:
       $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
       
       If ($isDebug) {
+        Write-Host
         Write-Host "PARAMETERS:"
         Write-Host "SourcePath: $sourcePath"
         Write-Host "TargetPath: $targetPath"
@@ -44,15 +45,10 @@ steps:
         Write-Host "TimeServer: $timeServer"
         Write-Host "Releases: $releases"
         Write-Host
-        
         Write-Host "FOLDER INFORMATION:"
         $loc = Get-Location
         Write-Host "Startup Folder: $loc"
         Write-Host "Script Folder: $scriptFolder"
-        Write-Host
-        
-        Write-Host "CURRENT FOLDER CONTENTS:"
-        Dir -Recurse | Format-Table
       }
 
       Function CopyNuGet {
@@ -88,18 +84,18 @@ steps:
           }
 
           Try {
-            Write-Host "Copy: $newestPackage"
             Copy-Item "$newestPackage" "$targetPath" -Verbose
           }
           Catch {
+            Write-Host
             Write-Host "!! Issue encountered copying NuGet package: $newestPackage"
             Write-Host "!! Issue: $_"
           }
-          Write-Host
         }
       }
 
       If ($certIdentifier.Length -eq 0) {
+        Write-Host
         Write-Host ":( Certified Identifer not specified.  Discontinuing."
         Exit 1
       }

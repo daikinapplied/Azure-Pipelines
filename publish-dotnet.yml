@@ -26,19 +26,15 @@ steps:
       $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
       
       If ($isDebug) {
+        Write-Host
         Write-Host "PARAMETERS:"
         Write-Host "SourcePath: $sourcePath"
         Write-Host "TargetPath: $targetPath"
         Write-Host
-        
         Write-Host "FOLDER INFORMATION:"
         $loc = Get-Location
         Write-Host "Startup Folder: $loc"
-        Write-Host "Script Folder: $scriptFolder"
-        Write-Host
-        
-        Write-Host "CURRENT FOLDER CONTENTS:"
-        Dir -Recurse | Format-Table
+        Write-Host "Script Folder: $scriptFolder"     
       }
 
       Write-Host
@@ -64,11 +60,9 @@ steps:
       If (Test-Path "$targetPath\app_offline.htm") {
         Write-Host
         Write-Host "Bring site online..."
-        Write-Host
         Remove-Item "$targetPath\app_offline.htm"
       }
 
-      Write-Host "Update Process Complete"
       Exit 0
 
 # ~End~

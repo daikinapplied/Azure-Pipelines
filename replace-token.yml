@@ -36,6 +36,7 @@ steps:
       $isContinueSilently = ($continueSilently -eq '1' -or $continueSilently -eq 'yes' -or $continueSilently -eq 'true')
       
       If ($isDebug) {
+        Write-Host
         Write-Host "PARAMETERS:"
         Write-Host "FileWithPath: $filePath"
         Write-Host "BackupFileExtension: $filePathBackup"
@@ -43,31 +44,28 @@ steps:
         Write-Host "TokenString: $tokenStr"
         Write-Host "TokenValue: $tokenVal"
         Write-Host
-        
         Write-Host "FOLDER INFORMATION:"
         $loc = Get-Location
         $scriptFolder = $PSScriptRoot
         Write-Host "Startup Folder: $loc"
         Write-Host "Script Folder: $scriptFolder"
-        Write-Host
-        
-        Write-Host "CURRENT FOLDER CONTENTS:"
-        Dir -Recurse | Format-Table
-        Write-Host
       }
 
       If ($definedBackup) {
         $backupExists = (Test-Path $filePathBackup -PathType Leaf)
         If ($isRestoreBackup -and $backupExists) {
+            Write-Host
             Write-Host "Restore Original"
             Copy-Item -Path "$filePathBackup" -Destination "$filePath"
         }
         ElseIf (!$backupExists) {
+            Write-Host
             Write-Host "Backup Original"
             Copy-Item -Path "$filePath" -Destination "$filePathBackup"
         }
       }
       
+      Write-Host
       Write-Host "Update Data for $tokenStr within $filePath"
       Try {
         $oldContent = Get-Content -Path "$filePath" -Raw
@@ -81,16 +79,16 @@ steps:
           Write-Host "~~~~~~~~~~~~~~~~~ File Contents (Start) ~~~~~~~~~~~~~~~~~"
           Get-Content -Path "$filePath" -Raw
           Write-Host "~~~~~~~~~~~~~~~~~ File Contents (End) ~~~~~~~~~~~~~~~~~"
-          Write-Host
         }
       }
       Catch {
+        Write-Host
         Write-Host "Error encountered trying to update token: $_"
         If (!isContinueSilently) {
           Exit 1
         }
       }
-      Write-Host "Update Process Complete"
+
       Exit 0
 
 # ~End~

@@ -43,30 +43,27 @@ steps:
         Write-Host "XPathUpdate: $xpath"
         Write-Host "NewValue: $newValue"
         Write-Host
-        
         Write-Host "FOLDER INFORMATION:"
         $loc = Get-Location
         $scriptFolder = $PSScriptRoot
         Write-Host "Startup Folder: $loc"
         Write-Host "Script Folder: $scriptFolder"
-        Write-Host
-        
-        Write-Host "CURRENT FOLDER CONTENTS:"
-        Dir | Format-Table
-        Write-Host
       }
       If ($definedBackup) {
         $backupExists = (Test-Path $filePathBackup -PathType Leaf)
         If ($isRestoreBackup -and $backupExists) {
+            Write-Host
             Write-Host "Restore Original"
             Copy-Item -Path "$filePathBackup" -Destination "$filePath"
         }
         ElseIf (!$backupExists) {
+            Write-Host
             Write-Host "Backup Original"
             Copy-Item -Path "$filePath" -Destination "$filePathBackup"
         }
       }
-      
+
+      Write-Host      
       Write-Host "Update Data within $filePath"
       Try {
         [xml]$xml = Get-Content -Path "$fileWithPath" -Raw
@@ -77,12 +74,13 @@ steps:
         $xml.Save($filePath) 
       }
       Catch {
+        Write-Host
         Write-Host "Error encountered trying to update config: $_"
         If (!isContinueSilently) {
           Exit 1
         }
       }
-      Write-Host "Update Process Complete"
+
       Exit 0
 
 # ~End~
