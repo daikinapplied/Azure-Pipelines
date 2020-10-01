@@ -11,6 +11,9 @@ parameters:
   DisplayName: 'Publish Dotnet'
   SourcePath: '.\'
   TargetPath: ''
+  SqlServer: ''    # Optional
+  SqlDatabase: ''  # Optional
+  SqlFile: ''      # Optional
   Debug: 'no'
 
 steps:
@@ -22,6 +25,9 @@ steps:
       $scriptFolder = $PSScriptRoot
       $sourcePath = "${{ parameters.SourcePath }}"
       $targetPath = "${{ parameters.TargetPath }}"
+      $sqlServer = "${{ parameters.SqlServer }}"
+      $sqlDatabase = "${{ parameters.SqlDatabase }}"
+      $sqlFile = "${{ parameters.SqlFile }}"
       $debug = "${{ parameters.Debug }}"
       $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
       
@@ -30,6 +36,9 @@ steps:
         Write-Host "PARAMETERS:"
         Write-Host "SourcePath: $sourcePath"
         Write-Host "TargetPath: $targetPath"
+        Write-Host "SqlServer: $sqlServer"
+        Write-Host "Database: $sqlDatabase"
+        Write-Host "File: $sqlFile"
         Write-Host
         Write-Host "FOLDER INFORMATION:"
         $loc = Get-Location
@@ -47,6 +56,13 @@ steps:
         Write-Host "Taking existing site offline"
         New-Item "$targetPath\app_offline.htm" -Force -ItemType "file" -value "<html>Service offline for software update...</html>"
         Start-Sleep -s 3
+      }
+
+      # Optional
+      If ($sqlServer.Length -gt 0 -and $sqlDatabase.Length -gt 0 -and $sqlFile.Length -gt 0) {
+        Write-Host
+        Write-Host "Updating SQL Server $sqlServer database $sqlDatabase"
+        sqlcmd -S "$sqlServer" -d "$sqlDatabase" -E -i "$sqlFile"
       }
 
       Write-Host
