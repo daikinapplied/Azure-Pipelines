@@ -11,6 +11,7 @@ parameters:
   DisplayName: 'Publish Dotnet'
   SourcePath: '.\'
   TargetPath: ''
+  SourceFileMask: ''
   SqlServer: ''    # Optional
   SqlDatabase: ''  # Optional
   SqlFile: ''      # Optional
@@ -25,6 +26,7 @@ steps:
       $scriptFolder = $PSScriptRoot
       $sourcePath = "${{ parameters.SourcePath }}"
       $targetPath = "${{ parameters.TargetPath }}"
+      $sourceFileMask = "${{ parameters.SourceFileMask }}"
       $sqlServer = "${{ parameters.SqlServer }}"
       $sqlDatabase = "${{ parameters.SqlDatabase }}"
       $sqlFile = "${{ parameters.SqlFile }}"
@@ -36,6 +38,7 @@ steps:
         Write-Host "PARAMETERS:"
         Write-Host "SourcePath: $sourcePath"
         Write-Host "TargetPath: $targetPath"
+        Write-Host "Source File Mask: $sourceFileMask"
         Write-Host "SqlServer: $sqlServer"
         Write-Host "Database: $sqlDatabase"
         Write-Host "File: $sqlFile"
@@ -67,7 +70,7 @@ steps:
 
       Write-Host
       Write-Host "Copying files..."
-      robocopy "$sourcePath" "$targetPath" /PURGE /S /XF app_offline.htm /XD logs /NP
+      robocopy "$sourcePath" "$targetPath" "$sourceFileMask" /PURGE /S /XF app_offline.htm /XD logs /NP
 
       Write-Host
       Write-Host "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
