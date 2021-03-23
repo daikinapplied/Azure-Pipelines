@@ -4,6 +4,8 @@
 # Developed by Hans Dickel
 # Repo daikinapplied/Azure-Pipelines
 # Designed for .NET Framework NuGet Package Building
+#   to provide similar capabilities similar as .NET Core
+#   and .NET Standard.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops
@@ -11,7 +13,6 @@
 parameters:
   DisplayName: ''
   SourcePath: ''
-  TargetPath: ''
   Releases: 'Release|prd'
   Debug: 'no'
 
@@ -23,7 +24,6 @@ steps:
     script: |
       $scriptFolder = $PSScriptRoot
       $sourcePath = "${{ parameters.SourcePath }}"
-      $targetPath = "${{ parameters.TargetPath }}"
       $releases = "${{ parameters.Releases }}"
       $debug = "${{ parameters.Debug }}"
       $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
@@ -32,7 +32,6 @@ steps:
         Write-Host
         Write-Host "PARAMETERS:"
         Write-Host "SourcePath: $sourcePath"
-        Write-Host "TargetPath: $targetPath"
         Write-Host "Releases: $releases"
         Write-Host
         Write-Host "FOLDER INFORMATION:"

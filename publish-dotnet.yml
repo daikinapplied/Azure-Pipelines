@@ -15,6 +15,8 @@ parameters:
   SqlServer: ''    # Optional
   SqlDatabase: ''  # Optional
   SqlFile: ''      # Optional
+  ExcludeFolders: '' # Optional, Space-Delimited
+  ExcludeFiles: '' # Optional, Space-Delimited
   Debug: 'no'
 
 steps:
@@ -30,6 +32,8 @@ steps:
       $sqlServer = "${{ parameters.SqlServer }}"
       $sqlDatabase = "${{ parameters.SqlDatabase }}"
       $sqlFile = "${{ parameters.SqlFile }}"
+      $excludeFolders = "${{ parameters.ExcludeFolders }}"
+      $excludeFiles = "${{ parameters.ExcludeFiles }}"
       $debug = "${{ parameters.Debug }}"
       $isDebug = ($debug -eq '1' -or $debug -eq 'yes' -or $debug -eq 'true')
       
@@ -39,9 +43,11 @@ steps:
         Write-Host "SourcePath: $sourcePath"
         Write-Host "TargetPath: $targetPath"
         Write-Host "Source File Mask: $sourceFileMask"
-        Write-Host "SqlServer: $sqlServer"
-        Write-Host "Database: $sqlDatabase"
-        Write-Host "File: $sqlFile"
+        Write-Host "SQL Server: $sqlServer"
+        Write-Host "SQL Database: $sqlDatabase"
+        Write-Host "SQL File: $sqlFile"
+        Write-Host "Exclude Folders: $excludeFolders"
+        Write-Host "Exclude Files: $excludeFiles"
         Write-Host
         Write-Host "FOLDER INFORMATION:"
         $loc = Get-Location
@@ -68,9 +74,11 @@ steps:
         sqlcmd -S "$sqlServer" -d "$sqlDatabase" -E -i "$sqlFile"
       }
 
+      $excludeFolders = "logs " + $excludeFolders
+      $excludeFiles = "app_offline.htm " + $excludeFiles
       Write-Host
       Write-Host "Copying files..."
-      robocopy "$sourcePath" "$targetPath" "$sourceFileMask" /PURGE /S /XF app_offline.htm /XD logs /NP
+      robocopy "$sourcePath" "$targetPath" "$sourceFileMask" /PURGE /S /XF $excludeFiles /XD $excludeFolders /NP
 
       Write-Host
       Write-Host "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
