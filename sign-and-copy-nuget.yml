@@ -11,9 +11,12 @@ parameters:
   DisplayName: ''
   SourcePath: ''
   TargetPath: ''
+
+  # Local Certificate Store options
   CertificateIdentifier: ''
   CertificateIdType: 'subject'
   CertificateStore: 'LocalMachine' #CurrentUser
+
   TimeServer: 'http://timestamp.comodoca.com?td=sha256'
   Releases: 'Release|prd'
   Debug: 'no'
@@ -76,12 +79,16 @@ steps:
 
         If ($newestPackage) {
           Write-Host "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-          # NuGet (that supports signing) defaults to "CurrentUser" for the store Get-Location
-          If ($certIdType.ToLower() -eq "subject") {
-            nuget sign "$newestPackage" -CertificateStoreLocation $certStore -CertificateSubjectName $certIdentifier -Timestamper $timeServer
-          }
-          Else {
-            nuget sign "$newestPackage" -CertificateStoreLocation $certStore -CertificateFingerprint $certIdentifier -Timestamper $timeServer
+
+          if ($certIdentifier.Length -gt 0) {
+            Write-Host "Signing with local certificate store..."
+            # NuGet (that supports signing) defaults to "CurrentUser" for the store Get-Location
+            If ($certIdType.ToLower() -eq "subject") {
+              nuget sign "$newestPackage" -CertificateStoreLocation $certStore -CertificateSubjectName $certIdentifier -Timestamper $timeServer
+            }
+            Else {
+              nuget sign "$newestPackage" -CertificateStoreLocation $certStore -CertificateFingerprint $certIdentifier -Timestamper $timeServer
+            }
           }
 
           Try {
@@ -93,12 +100,6 @@ steps:
             Write-Host "!! Issue: $_"
           }
         }
-      }
-
-      If ($certIdentifier.Length -eq 0) {
-        Write-Host
-        Write-Host ":( Certified Identifer not specified.  Discontinuing."
-        Exit 1
       }
 
       # Search Subfolders (that may contain NuGet Packages)
