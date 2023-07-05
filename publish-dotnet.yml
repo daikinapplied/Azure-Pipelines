@@ -12,11 +12,13 @@ parameters:
   SourcePath: '.\'
   TargetPath: ''
   SourceFileMask: ''
-  SqlServer: ''    # Optional
-  SqlDatabase: ''  # Optional
-  SqlFile: ''      # Optional
+  SqlServer: ''      # Optional
+  SqlDatabase: ''    # Optional
+  SqlFile: ''        # Optional
+  SqlUser: ''        # Optional
+  SqlPassword: ''    # Optional
   ExcludeFolders: '' # Optional, Pipe-Delimited
-  ExcludeFiles: '' # Optional, Pipe-Delimited
+  ExcludeFiles: ''   # Optional, Pipe-Delimited
   Debug: 'no'
 
 steps:
@@ -32,6 +34,8 @@ steps:
       $sqlServer = "${{ parameters.SqlServer }}"
       $sqlDatabase = "${{ parameters.SqlDatabase }}"
       $sqlFile = "${{ parameters.SqlFile }}"
+      $sqlUser = "${{ parameters.SqlUser }}"
+      $sqlPassword = "${{ parameters.SqlPassword }}"
       $excludeFolders = "${{ parameters.ExcludeFolders }}"
       $excludeFiles = "${{ parameters.ExcludeFiles }}"
       $debug = "${{ parameters.Debug }}"
@@ -46,6 +50,12 @@ steps:
         Write-Host "SQL Server: $sqlServer"
         Write-Host "SQL Database: $sqlDatabase"
         Write-Host "SQL File: $sqlFile"
+        Write-Host "SQL Username: $sqlUser"
+        $infoSqlPassword = "(None Specified)"
+        If ($sqlPassword.Length -gt 0) {
+          $infoSqlPassword = "(Password Specified)"
+        }
+        Write-Host "SQL Password: $infoSqlPassword"
         Write-Host "Exclude Folders: $excludeFolders"
         Write-Host "Exclude Files: $excludeFiles"
         Write-Host
@@ -71,7 +81,12 @@ steps:
       If ($sqlServer.Length -gt 0 -and $sqlDatabase.Length -gt 0 -and $sqlFile.Length -gt 0) {
         Write-Host
         Write-Host "Updating SQL Server $sqlServer database $sqlDatabase"
-        sqlcmd -S "$sqlServer" -d "$sqlDatabase" -E -i "$sqlFile"
+        if ($sqlUser.Length -gt 0 -and $sqlPassword.Length -gt 0) {
+          sqlcmd -S "$sqlServer" -d "$sqlDatabase" -U "$sqlUser" -P "$sqlPassword" -i "$sqlFile"
+        }
+        else {
+          sqlcmd -S "$sqlServer" -d "$sqlDatabase" -E -i "$sqlFile"
+        }
       }
 
       $excludeFolders = "logs|" + $excludeFolders
